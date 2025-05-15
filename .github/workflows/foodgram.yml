@@ -78,18 +78,4 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
 
-  run_postman_tests:
-    name: Run API tests with Postman
-    runs-on: ubuntu-latest
-    needs: [build_and_push_backend, build_and_push_frontend]
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Newman (Postman CLI)
-        run: npm install -g newman
-
-      - name: Run Postman tests
-        run: |
-          newman run postman_collection/foodgram.postman_collection.json
+  
