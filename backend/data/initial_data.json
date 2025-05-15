@@ -1,0 +1,249 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "username": "user1",
+      "email": "user1@example.com",
+      "password": "pbkdf2_sha256$216000$abc$O3Q+5AfWaYj+dnPHaxAqHeGg2Yd93SClWQvGceSmHoU=",
+      "first_name": "User",
+      "last_name": "One",
+      "is_active": true
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+      "username": "user2",
+      "email": "user2@example.com",
+      "password": "pbkdf2_sha256$216000$abc$O3Q+5AfWaYj+dnPHaxAqHeGg2Yd93SClWQvGceSmHoU=",
+      "first_name": "User",
+      "last_name": "Two",
+      "is_active": true
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 3,
+    "fields": {
+      "username": "user3",
+      "email": "user3@example.com",
+      "password": "pbkdf2_sha256$216000$abc$O3Q+5AfWaYj+dnPHaxAqHeGg2Yd93SClWQvGceSmHoU=",
+      "first_name": "User",
+      "last_name": "Three",
+      "is_active": true
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 4,
+    "fields": {
+      "username": "user4",
+      "email": "user4@example.com",
+      "password": "pbkdf2_sha256$216000$abc$O3Q+5AfWaYj+dnPHaxAqHeGg2Yd93SClWQvGceSmHoU=",
+      "first_name": "User",
+      "last_name": "Four",
+      "is_active": true
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 5,
+    "fields": {
+      "username": "user5",
+      "email": "user5@example.com",
+      "password": "pbkdf2_sha256$216000$abc$O3Q+5AfWaYj+dnPHaxAqHeGg2Yd93SClWQvGceSmHoU=",
+      "first_name": "User",
+      "last_name": "Five",
+      "is_active": true
+    }
+  },
+  {
+    "model": "recipes.ingredient",
+    "pk": 1,
+    "fields": {
+      "name": "Картофель",
+      "measurement_unit": "г"
+    }
+  },
+  {
+    "model": "recipes.ingredient",
+    "pk": 2,
+    "fields": {
+      "name": "Яйцо",
+      "measurement_unit": "шт"
+    }
+  },
+  {
+    "model": "recipes.ingredient",
+    "pk": 3,
+    "fields": {
+      "name": "Свекла",
+      "measurement_unit": "г"
+    }
+  },
+  {
+    "model": "recipes.ingredient",
+    "pk": 200,
+    "fields": {
+      "name": "Молоко",
+      "measurement_unit": "мл"
+    }
+  },
+  {
+  "model": "recipes.recipe",
+  "pk": 1,
+  "fields": {
+    "name": "Пюре",
+    "text": "Сварить картошку и размять",
+    "cooking_time": 30,
+    "author": 1,
+    "pub_date": "2025-05-12T12:00:00Z",
+    "image": "recipes/images/пюре.jpg",
+    "link": "pure123abc"
+  }
+},
+{
+  "model": "recipes.recipe",
+  "pk": 2,
+  "fields": {
+    "name": "Омлет",
+    "text": "Взбить яйца и пожарить",
+    "cooking_time": 10,
+    "author": 2,
+    "pub_date": "2025-05-12T12:10:00Z",
+    "image": "recipes/images/омлет.jpg",
+    "link": "omlet456de"
+  }
+},
+{
+  "model": "recipes.recipe",
+  "pk": 3,
+  "fields": {
+    "name": "Борщ",
+    "text": "Варить долго и упорно",
+    "cooking_time": 90,
+    "author": 3,
+    "pub_date": "2025-05-12T12:20:00Z",
+    "image": "recipes/images/борщ.jpg",
+    "link": "borsch789f"
+  }
+},
+{
+  "model": "recipes.recipe",
+  "pk": 4,
+  "fields": {
+    "name": "Гречка",
+    "text": "Добавить воды и гречки 1:2",
+    "cooking_time": 20,
+    "author": 4,
+    "pub_date": "2025-05-12T12:30:00Z",
+    "image": "recipes/images/гречка.jpg",
+    "link": "grechka12"
+  }
+},
+{
+  "model": "recipes.recipe",
+  "pk": 5,
+  "fields": {
+    "name": "Салат",
+    "text": "Порезать и перемешать",
+    "cooking_time": 5,
+    "author": 5,
+    "pub_date": "2025-05-12T12:40:00Z",
+    "image": "recipes/images/салат.jpeg",
+    "link": "salat34z"
+  }
+},
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 1,
+    "fields": {
+      "recipe": 1,
+      "ingredient": 1,
+      "amount": 200
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 2,
+    "fields": {
+      "recipe": 1,
+      "ingredient": 2,
+      "amount": 1
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 3,
+    "fields": {
+      "recipe": 2,
+      "ingredient": 2,
+      "amount": 2
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 4,
+    "fields": {
+      "recipe": 2,
+      "ingredient": 1,
+      "amount": 100
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 5,
+    "fields": {
+      "recipe": 3,
+      "ingredient": 3,
+      "amount": 300
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 6,
+    "fields": {
+      "recipe": 3,
+      "ingredient": 1,
+      "amount": 150
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 7,
+    "fields": {
+      "recipe": 4,
+      "ingredient": 2,
+      "amount": 2
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 8,
+    "fields": {
+      "recipe": 4,
+      "ingredient": 3,
+      "amount": 200
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 9,
+    "fields": {
+      "recipe": 5,
+      "ingredient": 1,
+      "amount": 100
+    }
+  },
+  {
+    "model": "recipes.recipeingredient",
+    "pk": 10,
+    "fields": {
+      "recipe": 5,
+      "ingredient": 3,
+      "amount": 50
+    }
+  }
+]
