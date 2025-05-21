@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
-from .constants import MAX_LENGTH_EMAIL, MAX_LENGTH_USERNAME 
+from .constants import MAX_LENGTH_EMAIL, MAX_LENGTH_USERNAME, REGEX_NAME
 
 
 class User(AbstractUser):
@@ -16,7 +16,7 @@ class User(AbstractUser):
         verbose_name='Имя пользователя',
         validators=[
             RegexValidator(
-                regex=r'^[a-zA-Z0-9_]+$',
+                regex=REGEX_NAME,
                 message='Никнейм может содержать только буквы и цифры',
                 code='invalid_username'
             )
