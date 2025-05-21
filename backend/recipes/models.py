@@ -1,12 +1,12 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
+from .constants import MAX_LENGTH_NAME_RECIPE
 import random
 import string
 
 
 User = get_user_model()
-MAX_LENGTH_NAME = 100
 
 
 class PublishedModel(models.Model):
@@ -26,7 +26,7 @@ class Ingredient(models.Model):
     """Ингредиент."""
 
     name = models.CharField(
-        max_length=MAX_LENGTH_NAME,
+        max_length=MAX_LENGTH_NAME_RECIPE,
         unique=True,
         verbose_name='Название'
     )
@@ -63,7 +63,7 @@ class Recipe(models.Model):
         verbose_name='Ингредиенты'
     )
     name = models.CharField(
-        max_length=MAX_LENGTH_NAME,
+        max_length=MAX_LENGTH_NAME_RECIPE,
         verbose_name='Название'
     )
     cooking_time = models.IntegerField(
