@@ -15,6 +15,7 @@ from django.shortcuts import get_object_or_404, redirect
 from rest_framework.decorators import action, api_view, permission_classes
 from django.http import HttpResponse
 from rest_framework import viewsets, status
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 User = get_user_model()
@@ -37,7 +38,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     pagination_class = RecipePagination
     http_method_names = ['get', 'post', 'patch', 'delete']
-    permission_classes = (IsAuthorOrReadOnly,)
+    permission_classes = (IsAuthorOrReadOnly,IsAuthenticatedOrReadOnly)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
