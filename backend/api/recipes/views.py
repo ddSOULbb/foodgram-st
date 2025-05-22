@@ -1,22 +1,23 @@
 from io import StringIO
 
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from recipes.models import Ingredient, Recipe, Favorite, ShoppingCart
-from .serializers import (
-    RecipeSerializer, IngredientSerializer,
-    AddRecipeSerializer, ShortRecipeSerializer)
-from rest_framework.response import Response
-from django.contrib.auth import get_user_model
-from .filters import RecipeFilter, IngredientFilter
-from django_filters.rest_framework import DjangoFilterBackend
 from api.pagination import RecipePagination
 from api.permissions import IsAuthorOrReadOnly
-from django.shortcuts import get_object_or_404, redirect
-from rest_framework.decorators import action, api_view, permission_classes
+from django.contrib.auth import get_user_model
 from django.http import HttpResponse
-from rest_framework import viewsets, status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
+from django_filters.rest_framework import DjangoFilterBackend
+from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart
+from rest_framework import status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.permissions import (SAFE_METHODS, AllowAny,
+                                        IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
+from rest_framework.response import Response
 
+from .filters import IngredientFilter, RecipeFilter
+from .serializers import (AddRecipeSerializer, IngredientSerializer,
+                          RecipeSerializer, ShortRecipeSerializer)
 
 User = get_user_model()
 
@@ -37,30 +38,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     serializer_class = RecipeSerializer
     pagination_class = RecipePagination
-    http_method_names = ['get', 'post', 'patch', 'delete']
-    permission_classes = (IsAuthorOrReadOnly,IsAuthenticatedOrReadOnly)
+    http_method_names = ["get", "post", "patch", "delete"]
+    permission_classes = (IsAuthorOrReadOnly, IsAuthenticatedOrReadOnly)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
     def get_queryset(self):
         recipes = Recipe.objects.all()
-        return recipes.select_related('author').prefetch_related('ingredients')
+        return recipes.select_related("author").prefetch_related("ingredients")
 
     def get_serializer_class(self):
-        if self.action in ['list', 'retrieve']:
+        if self.request.method in SAFE_METHODS:
             return RecipeSerializer
         return AddRecipeSerializer
 
-    def perform_create(self, serializer):
-        print("DATA:", self.request.data)
-        if not serializer.is_valid():
-            print("ERRORS:", serializer.errors)
-        serializer.save(author=self.request.user)
-
     @action(
-        detail=True,
-        methods=["post", "delete"],
-        permission_classes=[IsAuthenticated],
+        detail=True, methods=["post", "delete"], permission_classes=[IsAuthenticated],
     )
     def favorite(self, request, pk=None):
         recipe = self.get_object()
@@ -77,27 +70,28 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         elif request.method == "DELETE":
-            favorite_instance = Favorite.objects.filter(
-                user=user, recipe=recipe
-            )
-            if not favorite_instance.exists():
+            deleted_count, _ = Favorite.objects.filter(
+                user=request.user, recipe=recipe
+            ).delete()
+
+            if not deleted_count:
                 return Response(
                     {"errors": "Рецепта нет в избранном."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            favorite_instance.delete()
+
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @action(
-        detail=True, methods=['GET'], url_path='get-link',
-        permission_classes=[AllowAny])
+        detail=True, methods=["GET"], url_path="get-link", permission_classes=[AllowAny]
+    )
     def get_link(self, request, pk=None):
         result = get_object_or_404(Recipe, pk=pk)
         return Response(
             {"short-link": request.build_absolute_uri(f"/s/{result.link}/")},
-            status=status.HTTP_200_OK
+            status=status.HTTP_200_OK,
         )
 
     @action(
@@ -128,12 +122,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if not items.exists():
             return Response(
                 {"errors": "Рецепта нет в списке покупок."},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         items.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
     def _format_shopping_list(self, ingredients):
         output = StringIO()
@@ -143,10 +136,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
             output.write(line)
         return output.getvalue()
 
-
     @action(
-        detail=False, methods=['GET'], url_path='download_shopping_cart',
-        permission_classes=[IsAuthenticated])
+        detail=False,
+        methods=["GET"],
+        url_path="download_shopping_cart",
+        permission_classes=[IsAuthenticated],
+    )
     def download_basket(self, request):
         basket = request.user.shoppingcarts.all()
         ingredients = {}
@@ -159,22 +154,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 amount = ingredient.amount
 
                 if name in ingredients:
-                    ingredients[name]['amount'] += amount
+                    ingredients[name]["amount"] += amount
                 else:
                     ingredients[name] = {
-                        'measurement_unit': measurement_unit,
-                        'amount': amount,
+                        "measurement_unit": measurement_unit,
+                        "amount": amount,
                     }
 
         return HttpResponse(
             self._format_shopping_list(ingredients),
-            content_type='text/plain',
-            headers={'Content-Disposition': 'attachment; filename="list.txt"'}
+            content_type="text/plain",
+            headers={"Content-Disposition": 'attachment; filename="list.txt"'},
         )
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def redirect_by_short_link(request, link):
     recipe = get_object_or_404(Recipe, link=link)
-    return redirect(f'/recipes/{recipe.id}/')
+    return redirect(f"/recipes/{recipe.id}/")
