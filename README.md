@@ -73,7 +73,7 @@ docker compose up --build
   GET /api/ingredients/
   ```
 
-  - **Скачивание списка покупок**:
+- **Скачивание списка покупок**:
   ```http
   GET /api/recipes/download_shopping_cart/
   ```
@@ -84,7 +84,7 @@ docker compose up --build
 
 Документация будет доступен по адресу:
 
-**[http://localhost/](http://localhost/api/docs)**
+**[http://localhost/](http://localhost//api//docs)**
 
 ## Контакты
 
