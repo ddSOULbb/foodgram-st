@@ -11,7 +11,9 @@ load_dotenv(os.path.join(BASE_DIR, "..", "infra", ".env"))
 
 SECRET_KEY = get_random_secret_key()
 
-DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() in ("true", "1", "t", "y", "yes")
+
+positive_answer = ["true", "1", "t", "y", "yes"]
+DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() in positive_answer
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
@@ -110,7 +112,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",  # noqa: E501
     "PAGE_SIZE": PAGE_SIZE,
 }
 
@@ -122,9 +124,17 @@ MEDIA_ROOT = BASE_DIR / "media_backend"
 
 
 DJOSER = {
-    "LOGIN_FIELD": "email",
-    "SERIALIZERS": {"user": "api.users.serializers.UserSerializer",},
+    "USER_CREATE_PASSWORD_RETYPE": False,
+    "SERIALIZERS": {
+        "user": "api.users.serializers.UserSerializer",
+        "current_user": "api.users.serializers.UserSerializer",
+    },
+    "PERMISSIONS": {
+        "user": ["rest_framework.permissions.IsAuthenticatedOrReadOnly"],
+        "user_list": ["rest_framework.permissions.AllowAny"],
+    },
 }
+
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=10),

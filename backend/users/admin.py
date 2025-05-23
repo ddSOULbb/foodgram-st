@@ -37,6 +37,7 @@ class CustomUserAdmin(BaseUserAdmin):
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "subscribed_to")
-    search_fields = ("user__username", "subscribed_to__username")
-    list_filter = ("user",)
+    list_display = ('author', 'subscriber')
+    list_filter = ('author', 'subscriber')
+    search_fields = ('author__username', 'subscriber__username')
+    ordering = ('author',)

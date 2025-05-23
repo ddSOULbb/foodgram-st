@@ -4,9 +4,9 @@ import string
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from foodgram.constants import (LENGTH_SHORT_LINK, MAX_INGREDIENT_AMOUNT,
+from foodgram.constants import (LENGTH_SHORT_LINK, MAX_INGREDIENT,
                                 MAX_LENGTH_LINK, MAX_LENGTH_RECIPE,
-                                MIN_COOKING_TIME, MIN_INGREDIENT_AMOUNT)
+                                MIN_COOKING_TIME, MIN_INGREDIENT)
 
 User = get_user_model()
 
@@ -41,7 +41,8 @@ class Ingredient(models.Model):
         verbose_name_plural = "Ингредиенты"
         constraints = [
             models.UniqueConstraint(
-                fields=["name", "measurement_unit"], name="unique_name_measurement_unit"
+                fields=["name", "measurement_unit"],
+                name="unique_name_measurement_unit"
             )
         ]
         ordering = ("name",)
@@ -53,17 +54,26 @@ class Ingredient(models.Model):
 class Recipe(models.Model):
     """Рецепт."""
 
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор")
-    ingredients = models.ManyToManyField(
-        Ingredient, through="RecipeIngredient", verbose_name="Ингредиенты"
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Автор"
     )
-    name = models.CharField(max_length=MAX_LENGTH_RECIPE, verbose_name="Название")
+    ingredients = models.ManyToManyField(
+        Ingredient,
+        through="RecipeIngredient",
+        verbose_name="Ингредиенты"
+    )
+    name = models.CharField(
+        max_length=MAX_LENGTH_RECIPE,
+        verbose_name="Название"
+    )
     cooking_time = models.PositiveIntegerField(
         verbose_name="Время приготовления",
         validators=[
             MinValueValidator(
                 MIN_COOKING_TIME,
-                message=f"Время приготовления должно быть не менее {MIN_COOKING_TIME} минуты.",
+                message=f"Время не может быть менее {MIN_COOKING_TIME} минуты",
             )
         ],
     )
@@ -74,8 +84,14 @@ class Recipe(models.Model):
         null=True,
         verbose_name="Ссылка",
     )
-    pub_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата публикации")
-    image = models.ImageField(upload_to="images/", verbose_name="Картинка")
+    pub_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата публикации"
+    )
+    image = models.ImageField(
+        upload_to="images/",
+        verbose_name="Картинка"
+    )
     text = models.TextField(verbose_name="Описание")
 
     class Meta:
@@ -101,7 +117,11 @@ class Recipe(models.Model):
 class RecipeIngredient(models.Model):
     """Ингредиент в рецепте."""
 
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name="Рецепт",)
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name="Рецепт",
+    )
     ingredient = models.ForeignKey(
         Ingredient, on_delete=models.CASCADE, verbose_name="Ингредиент"
     )
@@ -109,12 +129,12 @@ class RecipeIngredient(models.Model):
         verbose_name="Количество",
         validators=[
             MinValueValidator(
-                MIN_INGREDIENT_AMOUNT,
-                message=f"Количество должно быть не менее {MIN_INGREDIENT_AMOUNT}",
+                MIN_INGREDIENT,
+                message=f"Количество не может быть менее {MIN_INGREDIENT}",
             ),
             MaxValueValidator(
-                MAX_INGREDIENT_AMOUNT,
-                message=f"Количество должно быть больше {MAX_INGREDIENT_AMOUNT}",
+                MAX_INGREDIENT,
+                message=f"Количество должно быть больше {MAX_INGREDIENT}",
             ),
         ],
     )
@@ -125,7 +145,8 @@ class RecipeIngredient(models.Model):
         default_related_name = "recipeingredients"
         constraints = [
             models.UniqueConstraint(
-                fields=["recipe", "ingredient"], name="unique_recipe_ingredient"
+                fields=["recipe", "ingredient"],
+                name="unique_recipe_ingredient"
             )
         ]
 

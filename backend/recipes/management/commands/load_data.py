@@ -1,7 +1,8 @@
 import json
+
 from django.core.management.base import BaseCommand
-from tqdm import tqdm
 from recipes.models import Ingredient
+from tqdm import tqdm
 
 
 class Command(BaseCommand):
@@ -23,8 +24,7 @@ class Command(BaseCommand):
 
                 if name and measurement_unit:
                     Ingredient.objects.get_or_create(
-                        name=name,
-                        measurement_unit=measurement_unit
+                        name=name, measurement_unit=measurement_unit
                     )
             self.stdout.write(self.style.SUCCESS("Loaded successfully!"))
         except Exception as error:

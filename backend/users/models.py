@@ -1,39 +1,48 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
-from foodgram.constants import (MAX_LENGTH_EMAIL, MAX_LENGTH_USERNAME,
-                                REGEX_NAME)
+from foodgram.constants import MAX_LENGTH_EMAIL, MAX_LENGTH_USERNAME
 
 
 class User(AbstractUser):
     """Модель пользователя."""
 
-    email = models.EmailField(
-        unique=True,
-        blank=True,
-        max_length=MAX_LENGTH_EMAIL,
-        verbose_name="Электронная почта",
-    )
     username = models.CharField(
         max_length=MAX_LENGTH_USERNAME,
-        blank=True,
         unique=True,
-        verbose_name="Имя пользователя",
-        validators=[
-            RegexValidator(
-                regex=REGEX_NAME,
-                message="Никнейм может содержать только буквы и цифры",
-                code="invalid_username",
-            )
-        ],
+        verbose_name="Никнейм",
+        validators=[UnicodeUsernameValidator(), ],
     )
-    avatar = models.ImageField(upload_to="users/", null=True, blank=True, default=None)
+
+    first_name = models.CharField(
+        max_length=MAX_LENGTH_USERNAME,
+        verbose_name="Имя"
+    )
+
+    last_name = models.CharField(
+        max_length=MAX_LENGTH_USERNAME,
+        verbose_name="Фамилия"
+    )
+
+    email = models.EmailField(
+        max_length=MAX_LENGTH_EMAIL,
+        unique=True,
+        verbose_name="Электронная почта"
+    )
+
+    avatar = models.ImageField(
+        upload_to="users/avatars",
+        blank=True,
+        null=True,
+        verbose_name="Аватар"
+    )
+
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]
+    REQUIRED_FIELDS = ["username", "first_name", "last_name"]
 
     class Meta:
-        verbose_name = "профиль пользователя"
-        verbose_name_plural = "профили пользователей"
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
         ordering = ("username",)
 
     def __str__(self):
@@ -41,32 +50,35 @@ class User(AbstractUser):
 
 
 class Subscription(models.Model):
-    subscribed_to = models.ForeignKey(
-        User,
+    """Модель подписки."""
+
+    author = models.ForeignKey(
+        User, verbose_name="Автор",
         on_delete=models.CASCADE,
-        related_name="subscribed_to",
-        verbose_name="Подписан на",
+        related_name="authors"
     )
-    user = models.ForeignKey(
+
+    subscriber = models.ForeignKey(
         User,
+        verbose_name="Подписан",
         on_delete=models.CASCADE,
-        related_name="subscriber",
-        verbose_name="Подписчик",
+        related_name="subscriptions",
     )
 
     class Meta:
-        verbose_name = "подписка"
-        verbose_name_plural = "подписки"
-        ordering = ("user",)
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
+        ordering = ("author__username",)
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "subscribed_to"], name="unique_subscriber_subscription"
+                fields=["subscriber", "author"],
+                name="unique_subscription"
             ),
             models.CheckConstraint(
-                check=~models.Q(user=models.F("subscribed_to")),
-                name="prevent_self_subscription",
+                check=~models.Q(subscriber=models.F("author")),
+                name="self_subscription"
             ),
         ]
 
     def __str__(self):
-        return f"Подписчик {self.user}"
+        return f"{self.subscriber} подписан на {self.author}"
