@@ -84,7 +84,7 @@ docker compose up --build
 
 Документация будет доступен по адресу:
 
-**[http://localhost/](http://localhost//api//docs)**
+**[http://localhost/api/docs](http://localhost/api/docs)**
 
 ## Контакты
 
